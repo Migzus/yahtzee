@@ -1,21 +1,37 @@
 #include "yahtzee.h"
 
-int main()
-{
-    Dice die;
+int main() {
+    bool exitGame{ false };
 
     srand(static_cast<unsigned int>(time(nullptr)));
 
-    switch (_getch()) {
-    case 'a':
-        die.ThrowDie();
-        break;
-    }
+    do {
+        YahtzeeCore* yahtzee = new YahtzeeCore;
 
-    for (unsigned long long i = 0; i < 5; i++) {
-        printf("%i", die.get_Die().at(i));
-        std::cout << std::endl;
-    }
+        exitGame = false;
+
+        std::cout << "Choose player count(max 10): ";
+        std::cin >> yahtzee->playerCount;
+
+        clamp(&yahtzee->playerCount, static_cast<unsigned short>(1), static_cast<unsigned short>(10));
+
+        system("cls");
+
+        yahtzee->NamePlayers();
+        HideCursor();
+
+        yahtzee->Tutorial(80, 4);
+        yahtzee->Run();
+
+        system("cls");
+
+        yahtzee->EndGame(&exitGame);
+
+        system("cls");
+
+        delete yahtzee;
+
+    } while (!exitGame);
 
     return 0;
 }

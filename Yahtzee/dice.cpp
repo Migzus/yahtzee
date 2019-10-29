@@ -1,47 +1,56 @@
 #include "yahtzee.h"
 
-const std::vector<DICE_NUM>& Dice::get_Die() const {
-    return m_die;
-}
-
 void Dice::ThrowDie() {
-    m_die.clear();
-
-    for (int i{ 0 }; i <= length; i++) {
+    for (size_t i{ 0 }; i < length; i++) {
         int _randomThrow = (rand() % 6) + 1;
 
-        //std::cout << "Random: " << _randomThrow << '\n';
-
-        switch (_randomThrow) {
-        case 1:
-            m_die.push_back(DICE_NUM::ONE);
-            //std::cout << "one\n";
-            //die->push_back(DICE::ONE);
-            break;
-        case 2:
-            m_die.push_back(DICE_NUM::TWO);
-            //std::cout << "two\n";
-            break;
-        case 3:
-            m_die.push_back(DICE_NUM::THREE);
-            //std::cout << "three\n";
-            break;
-        case 4:
-            m_die.push_back(DICE_NUM::FOUR);
-            //std::cout << "four\n";
-            break;
-        case 5:
-            m_die.push_back(DICE_NUM::FIVE);
-            //std::cout << "five\n";
-            break;
-        case 6:
-            m_die.push_back(DICE_NUM::SIX);
-            //std::cout << "six\n";
-            break;
-        default:
-            m_die.push_back(DICE_NUM::_NULL);
-            std::cout << "A dice number was not properly assigned";
-            break;
+        if (m_die.at(i).keepThisDie) {
+            continue;
         }
+
+        m_die.at(i).dieNumber = DICE_NUM(_randomThrow);
+    }
+}
+
+void Dice::DrawDiceResult(int number, short offsetX, short offsetY) const {
+    if (number <= 0 || number > 6) {
+        gotoxy(offsetX, offsetY);
+        std::cout << "         ";
+        gotoxy(offsetX, offsetY + 1);
+        std::cout << "         ";
+        gotoxy(offsetX, offsetY + 2);
+        std::cout << "         ";
+        gotoxy(offsetX, offsetY + 3);
+        std::cout << "         ";
+        gotoxy(offsetX, offsetY + 4);
+        std::cout << "         ";
+    }
+    else {
+        gotoxy(offsetX, offsetY);
+        std::cout << "╭───────╮\n";
+        gotoxy(offsetX, offsetY + 1);
+        std::cout << "│ " << (number >= 4 && number <= 6 ? "●" : " ") <<
+                     "   " << (number >= 2 && number <= 6 ? "●" : " ") << " │\n";
+        gotoxy(offsetX, offsetY + 2);
+        std::cout << "│ " << (number == 6 ? "●" : " ") <<
+                     ' ' << (number == 1 || number == 3 || number == 5 ? "●" : " ") <<
+                     ' ' << (number == 6 ? "●" : " ") << " │\n";
+        gotoxy(offsetX, offsetY + 3);
+        std::cout << "│ " << (number >= 2 && number <= 6 ? "●" : " ") <<
+                     "   " << (number >= 4 && number <= 6 ? "●" : " ") << " │\n";
+        gotoxy(offsetX, offsetY + 4);
+        std::cout << "╰───────╯" << WHITE;
+    }
+}
+
+void Dice::set_keepDieToFalse() {
+    for (size_t i{ 0 }; i < m_die.size(); i++) {
+        m_die[i].keepThisDie = false;
+    }
+}
+
+void Dice::set_dieToZero() {
+    for (size_t i{ 0 }; i < m_die.size(); i++) {
+        m_die[i].dieNumber = DICE_NUM::_NULL;
     }
 }
